@@ -469,8 +469,24 @@ function sortByAsc(arr) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  let result = str;
+  for (let iterIndex = 0; iterIndex < iterations; iterIndex += 1) {
+    let evenPack = '';
+    let oddPack = '';
+    for (let i = 0; i < result.length; i += 1) {
+      if (i % 2 === 0) {
+        evenPack += result[i];
+      } else {
+        oddPack += result[i];
+      }
+    }
+    result = `${evenPack}${oddPack}`;
+    if (result === str) {
+      return shuffleChar(str, iterations % (iterIndex + 1));
+    }
+  }
+  return result;
 }
 
 /**
@@ -490,8 +506,48 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  let nums = [];
+  let numCopy = number;
+
+  while (numCopy > 0) {
+    nums.push(numCopy % 10);
+    numCopy = Math.floor(numCopy / 10);
+  }
+
+  nums = nums.reverse();
+
+  for (let i = nums.length - 1; i > 0; i -= 1) {
+    if (nums[i - 1] < nums[i]) {
+      [nums[i - 1], nums[i]] = [nums[i], nums[i - 1]];
+      let left = i - 1;
+      let right = nums.length - 1;
+      while (left < right) {
+        if (nums[left] > nums[right] && nums[right] > nums[left + 1]) {
+          [nums[left], nums[right]] = [nums[right], nums[left]];
+
+          left = 0;
+          right = 0;
+        }
+        right -= 1;
+      }
+      for (let k = i; k < nums.length - 1; k += 1) {
+        for (let j = k + 1; j < nums.length; j += 1) {
+          if (nums[k] > nums[j]) {
+            [nums[j], nums[k]] = [nums[k], nums[j]];
+          }
+        }
+      }
+      let result = nums[nums.length - 1];
+      let multiplier = 10;
+      for (let r = nums.length - 2; r >= 0; r -= 1) {
+        result += nums[r] * multiplier;
+        multiplier *= 10;
+      }
+      return result;
+    }
+  }
+  return number;
 }
 
 module.exports = {
